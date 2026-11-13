@@ -411,6 +411,33 @@ class BrickManager:
         return (GameModifiers.shared().brokenGuns and isinstance(weapon, MeleeWeapon)
                 and isinstance(target, (DiamondDropper, PowerUpContainer)))
 
+    def auto_aim_angle(self, weapon):
+        """PORT ADDITION (user request, 2026-11-14): where Auto-aim turns a shot, or None to leave it.
+
+        The bearing of the nearest zombie that a shot can hurt: one in the current wave that can be shot at
+        and is not behind its shield (`Enemy` state 6 takes nothing, so a shot at it is only wasted).  The
+        diamonds and what a passer-by drops are not zombies and are never chosen.  But a player who has
+        swiped round to one of them - it lies in the weapon's own spread of where the view points - is aimed
+        at it by choice, so the shot is left where it is and goes to that."""
+        head = _deg360(S3DEngine.engine().head_orientation)
+        reach = weapon.range * weapon.range
+        for t in list(self.diamonds) + list(self.passer_by_manager.all_passer_by()):
+            if not t.can_be_shot_at():
+                continue
+            a = _deg360(t.angle_from_player)
+            diff = abs(float(head - a))
+            if not (diff < weapon.spread) and abs(float(a - head)) <= 360 - weapon.spread:
+                continue
+            if t.squared_distance <= reach or self._swing_reaches(weapon, t):
+                return None
+        best = None
+        for t in self.enemies_from_current_brick():
+            if not t.can_be_shot_at() or t._state == 6:
+                continue
+            if best is None or t.squared_distance < best.squared_distance:
+                best = t
+        return None if best is None else best.angle_from_player
+
     def shot_with_special_weapon(self, weapon) -> None:         # 0x1000c4b38
         from .weapon import MeleeWeapon
         hits = self.calculate_hit_enemies(weapon, S3DEngine.engine().head_orientation)

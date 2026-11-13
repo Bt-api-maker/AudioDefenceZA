@@ -3800,6 +3800,27 @@ they were.
   holds gone, "Main Menu" said 10 ms after its screen, Play open in 28 ms; and heard through SAPI 5 made the
   usual way, asked for at once while still loading, and with a chosen voice and the boost on.
 
+* PORT ADDITION (user request, 2026-11-14): a fourth way to aim, **Auto-aim**, in Settings, Aiming
+  (`ui/settings.AIMING_ROWS`, `GameParameters.AUTO_AIM` = 4, stored in `controlScheme` like the others).  The
+  original turns the view by the gyroscope (1), a swipe (2) or a tilt (3) and a shot goes where the view
+  points (`calculateHitEnemies:` 0x1000c41c4 and `targetEnemiForExplosiveWeapon:` 0x1000c57b8 both read the
+  head orientation).  Auto-aim turns by swipe, so everywhere the port asks "is it Swipe" it asks
+  `GameParameters.swipe_turning` (Swipe or Auto-aim): the pan, the turn keys, the gyroscope being off, the
+  heading's sign, the announcer's swipe lines.  What it adds is a turn made just before a shot is resolved:
+  `WeaponManager.auto_aim` asks `BrickManager.auto_aim_angle` for the bearing of the nearest zombie of the
+  current wave that can be shot at - the squared distance the weapons already use - and
+  `GameplayController.turn_to` turns the view to it by the short way round (`InfiniteScrollView.turn_by`, as
+  The Magpie does).  It runs in `WeaponManager.shot` (every bullet of a gun, a grenade, a held trigger) and
+  `did_shot_with_melee` (a swing), so each kind of weapon and each mode is covered at one place and a held
+  trigger picks again for every round.  A Shield zombie raised behind its shield (state 6) is passed over:
+  it takes nothing (`hit_by_weapon` 0x100060b30 only plays the knock), and it is nearest only because it
+  stopped to hide.  Diamonds and passers-by are never chosen; but one of them within the weapon's own
+  spread and range of where the view points is what the player has swiped round to, so the shot is left
+  alone and goes there as it always did.  Nothing is chosen with none to choose, with the player dead, or
+  while The Magpie is turning the player (`turning_by_itself`): the shot goes where the view points.  No
+  weapon's rate, damage, spread or ammunition changes.  The turn is as fine as the view is (430 points a
+  turn, under a degree), a tenth of the smallest critical spread.
+
 ## Original quirks kept on purpose
 
 

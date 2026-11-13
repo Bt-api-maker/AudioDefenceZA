@@ -312,8 +312,25 @@ class WeaponManager:
     def set_current_weapon(self, weapon) -> None:         # 0x1000aa124
         self.current_weapon = weapon
 
+    def auto_aim(self, weapon) -> None:
+        """PORT ADDITION (user request, 2026-11-14): under Auto-aim, the view turns to the nearest zombie
+        before a shot is made (`BrickManager.auto_aim_angle`), so every kind of weapon - gun, grenade, melee,
+        a held trigger shot by shot - goes where the view then points.  Nothing else of the weapon changes."""
+        from .brick_manager import BrickManager
+        from .parameters import GameParameters
+        if weapon is None or GameParameters.shared().control_scheme != GameParameters.AUTO_AIM:
+            return
+        bm = BrickManager.shared()
+        gc = bm.gameplay_view_controller
+        if bm.player_is_dead or gc is None or not hasattr(gc, 'turn_to'):
+            return
+        angle = bm.auto_aim_angle(weapon)
+        if angle is not None:
+            gc.turn_to(angle)
+
     def shot(self) -> None:                               # 0x1000aa15c
         from .brick_manager import BrickManager
+        self.auto_aim(self.current_weapon)
         if self.current_weapon is not None and self.current_weapon.explosive:
             self.create_projectile_for_current_weapon()
             return
@@ -388,6 +405,7 @@ class WeaponManager:
 
     def did_shot_with_melee(self) -> None:                # 0x1000aabec
         from .brick_manager import BrickManager
+        self.auto_aim(self.melee_weapon)
         BrickManager.shared().shot_with_weapon(self.melee_weapon)
 
     def melee_weapon_name(self):                          # 0x1000aac60

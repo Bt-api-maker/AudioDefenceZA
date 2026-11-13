@@ -72,6 +72,7 @@ PHONE_AIM = {
     1: 'Hold the phone in front of you and turn your whole body to aim.',
     2: 'Swipe left or right with one finger to turn and aim.',
     3: 'Tilt the phone left or right to aim.',
+    4: 'Swipe left or right with one finger to turn. Each shot turns to the nearest zombie by itself.',
 }
 PHONE_LINES = {
     'shoot': ('Listen carefully and turn until you feel the zombie is right in front of you, then tap the '

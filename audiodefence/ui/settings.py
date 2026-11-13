@@ -58,7 +58,8 @@ def _headphones_playlist():
 # pass of the list; Turn sensitivity scales all three in proportion.
 AIMING_ROWS = (('Gyro', 'Turns slowest', 1),
                ('Swipe', 'Turns in between', 2),
-               ('Tilt', 'Turns fastest', 3))
+               ('Tilt', 'Turns fastest', 3),
+               ('Auto-aim', 'Swipe to turn. Each shot turns to the nearest zombie', 4))
 
 # BUTTON_MODE / GESTURE_MODE describe where to tap and how to swipe; the port's keys do both, so the rows
 # say what the mode changes for a keyboard player instead - with the keys bound in that mode, or the

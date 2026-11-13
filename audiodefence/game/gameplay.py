@@ -152,7 +152,7 @@ class InfiniteScrollView:
         q = int(off / width)                              # sdiv truncates toward zero
         t1 = off - q * width
         frac = f32(1.0 - f32(float(t1) / self.image_width))
-        sign = -1.0 if GameParameters.shared().control_scheme == 2 else 1.0
+        sign = -1.0 if GameParameters.shared().swipe_turning else 1.0
         S3DEngine.engine().set_head_orientation(f32(sign * (frac * 6.28318531)))
 
     def control_scheme_changed(self) -> None:             # 0x10009cb50
@@ -160,7 +160,7 @@ class InfiniteScrollView:
         if scheme == 1 or scheme == 3:
             self.enable_gyro()
             MotionManager.shared().start_motion_manager()
-        if scheme == 2:
+        if GameParameters.shared().swipe_turning:
             self.disable_gyro()
 
     @staticmethod
@@ -268,7 +268,7 @@ class AccessibleGameView:
 
     def touches_moved(self, point) -> None:               # 0x10008a5a4
         dx = float(point[0]) - self.initial_point[0]
-        if GameParameters.shared().control_scheme == 2 and self.gameplay_view_controller is not None:
+        if GameParameters.shared().swipe_turning and self.gameplay_view_controller is not None:
             self.gameplay_view_controller.touches_move_detected(dx, not self.has_started_to_move)
         self.has_started_to_move = True
         self.has_swiped = abs(dx) > 30
@@ -731,6 +731,16 @@ class GameplayController:
         for v in list(self.infinite_scroll_views):
             v.spun = False
 
+    def turn_to(self, angle: float) -> None:
+        """PORT ADDITION (user request, 2026-11-14): the view turned, the short way round, to this bearing -
+        Auto-aim's turn.  Not while The Magpie is turning the player, which nothing else may."""
+        if self.turning_by_itself:
+            return
+        head = S3DEngine.engine().head_orientation
+        delta = (angle - head + math.pi) % (2.0 * math.pi) - math.pi
+        for v in list(self.infinite_scroll_views):
+            v.turn_by(delta)
+
     def turn_by_itself(self, dt: float) -> None:
         """One tick of it: the view - and the aim with it - turned by a whole turn a second
         (modifiers.LOOSE_CONTROL_RADIANS_PER_SECOND), whatever the player does, and its time counted down.
@@ -779,7 +789,7 @@ class GameplayController:
         self.movement_on_last_frame = f32(-(sens * dx))
 
     def pan_detected(self, translation_x: float, began: bool) -> None:   # 0x10005a748
-        if GameParameters.shared().control_scheme == 2:
+        if GameParameters.shared().swipe_turning:
             self.touches_move_detected(translation_x, began)
 
     def switch_weapon_button_pressed(self) -> None:       # 0x10005a86c
@@ -1598,7 +1608,7 @@ class OpenerGameplayController(GameplayController):
         scheme = GameParameters.shared().control_scheme
         if scheme == 1:
             self.control_mode_label = 'Move the device'
-        elif scheme == 2:
+        elif scheme == 2 or scheme == GameParameters.AUTO_AIM:
             self.control_mode_label = 'Swipe the screen'
         elif scheme == 3:
             self.control_mode_label = 'Tilt the device'

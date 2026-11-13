@@ -82,7 +82,7 @@ class ADSound:
             scheme = params.control_scheme
             if scheme == 1:
                 key = key.replace('CONTROLMODE', 'gyroMode')
-            if scheme == 2:
+            if scheme == 2 or scheme == params.AUTO_AIM:
                 key = key.replace('CONTROLMODE', 'swipeMode')
             if scheme == 3:
                 key = key.replace('CONTROLMODE', 'tiltMode')

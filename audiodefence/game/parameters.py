@@ -43,6 +43,15 @@ class GameParameters:
     def control_scheme(self) -> int:
         return self._control_scheme
 
+    #: PORT ADDITION (user request, 2026-11-14): the fourth way to aim.  It turns as Swipe does, and a shot
+    #: first turns the view to the nearest zombie (`BrickManager.auto_aim_angle`).
+    AUTO_AIM = 4
+
+    @property
+    def swipe_turning(self) -> bool:
+        """Whether a swipe (or the turn keys standing in for one) turns the view: Swipe, and Auto-aim."""
+        return self._control_scheme in (2, self.AUTO_AIM)
+
     def set_control_scheme(self, value: int) -> None:      # 0x1000a40fc
         self.defaults.set_integer(value, 'controlScheme')
         self.defaults.synchronize()

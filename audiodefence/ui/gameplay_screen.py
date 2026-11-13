@@ -338,7 +338,7 @@ class GameplayScreen(Screen):
         c = self.controller
         # the button-mode buttons of the plain layout tick with the weapon timer in the original
         # (updateWeapons only ticks weaponTouchArea and weaponButton); their taps need no tick.
-        if GameParameters.shared().control_scheme == 2 and not c.paused:
+        if GameParameters.shared().swipe_turning and not c.paused:
             direction = self.motion.direction
             if direction != 0:
                 began = not self._pan_active
