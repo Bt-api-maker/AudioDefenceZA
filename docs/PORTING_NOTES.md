@@ -1242,7 +1242,8 @@ they were.
   the cards all read them as they read the rest, and the power-up page now asks whether the next level has a
   price rather than whether the level is four.
 
-  Guns and melee weapons gain a tenth of their level-4 damage a level (`DAMAGE_STEP`), and a magazine of more
+  Guns gain a tenth of their level-4 damage a level (`DAMAGE_STEP`; melee weapons, see the divergence about
+  `MELEE_DAMAGE_STEP`), and a magazine of more
   than two a twentieth of its level-4 size (`CLIP_STEP`), so one-round and two-barrel guns stay what they are.
   Nothing else grows: fire rate is tied to the gun's sounds, and melee is at its fastest by level 4.  Each level
   costs 1.3 times the last (`PRICE_GROWTH`), in what the weapon's upgrades already cost: a gun's go coins, coins,
@@ -3820,6 +3821,22 @@ they were.
   while The Magpie is turning the player (`turning_by_itself`): the shot goes where the view points.  No
   weapon's rate, damage, spread or ammunition changes.  The turn is as fine as the view is (430 points a
   turn, under a degree), a tenth of the smallest critical spread.
+
+* PORT DIVERGENCE (user request, 2026-11-16): a melee weapon gains a fifth of its level-1 damage with every
+  upgrade (`weapon.MELEE_DAMAGE_STEP`, `melee_damage_at`).  The original's melee levels barely move in damage -
+  the Wok is 25 at all four, the Golf Club 45, 45, 45, 50, the Cattle Prod 60 to 65 - and gain mostly in how
+  fast they swing (`fireRate`, 1 to 0.25 s for the Wok), which nothing in the armory said.  Level n is level 1
+  times (1 + 0.2 (n - 1)): the Wok 25, 30, 35, 40 ..., the Claymore 70, 84, 98, 112 ..., and on past level 4
+  without end, where the port's own levels used to add a tenth of level 4's.  `Weapon.__init__` and the armory
+  both read it through `melee_damage_at`, so what the page says is what the weapon does; the plist stays the
+  original's, and `tools/verify_stats.py` expects the divergence rather than the plist's own number.  The
+  swing rate and every other field are the original's.
+* PORT ADDITION (user request, 2026-11-16): the armory page says how fast a melee weapon swings.  Its stats
+  line read "Capacity : 0" for a weapon with no magazine; for a melee weapon it now reads "Damages : 40.0,
+  Swings per second : 4.00, Spread : 30", the swings being 1 / `fireRate` of the level shown (a melee weapon
+  is ready again once `fireRate` seconds have passed in its swinging state, `MeleeWeapon.update`).  A level
+  with no `fireRate` keeps the old line.  Guns are untouched: their rate is tied to their sounds, and some
+  are 0.  The line is what the screen reader speaks on the page.
 
 ## Original quirks kept on purpose
 

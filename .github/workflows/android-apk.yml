@@ -20,10 +20,22 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.13'
-      - name: Build debug APK
+      # With the AD_KEYSTORE_B64 secret (the signing key, base64) the APK is the release build, signed with the
+      # same key every time, so each one installs over the last.  Without it, a debug build as before.
+      - name: Build APK
         working-directory: android
-        run: gradle assembleDebug -PbuildPython="$(which python)" --no-daemon
+        env:
+          KEY_B64: ${{ secrets.AD_KEYSTORE_B64 }}
+        run: |
+          if [ -n "$KEY_B64" ]; then
+            echo "$KEY_B64" | base64 -d > "$RUNNER_TEMP/release.p12"
+            AD_KEYSTORE="$RUNNER_TEMP/release.p12" gradle assembleRelease -PbuildPython="$(which python)" --no-daemon
+            echo "VARIANT=release" >> "$GITHUB_ENV"
+          else
+            gradle assembleDebug -PbuildPython="$(which python)" --no-daemon
+            echo "VARIANT=debug" >> "$GITHUB_ENV"
+          fi
       - uses: actions/upload-artifact@v4
         with:
-          name: AudioDefence-Android-debug
-          path: android/app/build/outputs/apk/debug/*.apk
+          name: AudioDefence-Android-${{ env.VARIANT }}
+          path: android/app/build/outputs/apk/${{ env.VARIANT }}/*.apk

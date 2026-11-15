@@ -295,6 +295,7 @@
  "D-pad right": "ปุ่มลูกศรขวา",
  "D-pad up": "ปุ่มลูกศรบน",
  "Damages : %.1f, Capacity : %i, Spread : %i": "ความเสียหาย : %.1f ความจุ : %i การกระจาย : %i",
+ "Damages : %.1f, Swings per second : %.2f, Spread : %i": "ความเสียหาย : %.1f ฟาดต่อวินาที : %.2f การกระจาย : %i",
  "Damp Squib": "พลุด้าน",
  "Dawn. The radio stops in the middle of a sentence, and this time it stays stopped. The boat's engines are running and the gangway is down. You walk aboard with whatever you are still carrying, and the boat leaves the coast behind, exactly as promised.": "รุ่งสาง วิทยุหยุดกลางประโยค และครั้งนี้มันหยุดไปเลย เครื่องยนต์เรือทำงานและสะพานเทียบเรือวางลงแล้ว คุณเดินขึ้นเรือพร้อมของที่ยังถืออยู่ และเรือทิ้งชายฝั่งไว้ข้างหลัง ตรงตามที่สัญญา",
  "Deals big damage at close range, with a huge spread. Can take out many zombies in one shot.": "สร้างความเสียหายสูงในระยะใกล้ กระสุนกระจายกว้างมาก กำจัดซอมบี้ได้หลายตัวในนัดเดียว",

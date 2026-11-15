@@ -111,9 +111,12 @@ class Weapon:
         self.continuous_fire = ns_bool_value(_get(d, 'continuousFire'))
         self.explosive = ns_bool_value(_get(d, 'explosive'))
         bought = Inventory.shared().level_for_weapon(self.name)
-        level = _get(d, f'level_{bought if any_level else min(bought, LEVEL_IN_EVERY_MODE)}')
+        level_number = bought if any_level else min(bought, LEVEL_IN_EVERY_MODE)
+        level = _get(d, f'level_{level_number}')
         self.fire_rate = ns_float_value(_get(level, 'fireRate'))
         self.damages = ns_float_value(_get(level, 'damages'))
+        if ns_bool_value(_get(d, 'melee')):
+            self.damages = melee_damage_at(d, level_number)
         self._spread = ns_float_value(_get(level, 'spread'))
         self.critical_spread = ns_float_value(_get(level, 'criticalSpread'))
         self.critical_chance = ns_float_value(_get(level, 'criticalChance'))
@@ -719,6 +722,21 @@ class Weapon:
         log.info('Dealloc weapon')
         if self.playlist is not None:
             self.playlist.deactivate()
+
+
+#: PORT DIVERGENCE (user request, 2026-11-16): a melee weapon gains a fifth of its level-1 damage with every
+#: upgrade, without end.  The original's melee levels barely move - the Wok is 25 at all four levels, the Golf
+#: Club 45, 45, 45, 50 - and they were meant to get quicker rather than harder; the player asked for the
+#: upgrade to be felt.  Level n is level 1 times (1 + 0.2 (n - 1)): the Wok's 25, 30, 35, 40, 45 ... and the
+#: Claymore's 70, 84, 98, 112 ...  Read here rather than from the plist's `damages`, which stays the original's
+#: (`additions.py`'s levels past 4 carry theirs, and nothing reads a melee weapon's from them any more).
+MELEE_DAMAGE_STEP = 0.20
+
+
+def melee_damage_at(d: dict, level: int) -> float:
+    """The damage of the melee weapon whose plist entry is `d`, at this level (see MELEE_DAMAGE_STEP)."""
+    base = ns_float_value(_get(_get(d, 'level_1'), 'damages'))
+    return round(base * (1.0 + MELEE_DAMAGE_STEP * (max(level, 1) - 1)), 2)
 
 
 class MeleeWeapon(Weapon):

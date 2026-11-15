@@ -295,6 +295,7 @@
  "D-pad right": "крестовина вправо",
  "D-pad up": "крестовина вверх",
  "Damages : %.1f, Capacity : %i, Spread : %i": "Урон: %.1f, Ёмкость: %i, Разброс: %i",
+ "Damages : %.1f, Swings per second : %.2f, Spread : %i": "Урон: %.1f, Ударов в секунду: %.2f, Разброс: %i",
  "Damp Squib": "",
  "Dawn. The radio stops in the middle of a sentence, and this time it stays stopped. The boat's engines are running and the gangway is down. You walk aboard with whatever you are still carrying, and the boat leaves the coast behind, exactly as promised.": "",
  "Deals big damage at close range, with a huge spread. Can take out many zombies in one shot.": "Наносит большой урон вблизи, но с огромным разбросом. Может уложить много зомби одним выстрелом.",

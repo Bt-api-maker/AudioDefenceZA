@@ -106,7 +106,10 @@ def check_weapons() -> None:
             check(where, 'dispersal', w.dispersal,
                   ns_float_value(lv['dispersal']) if lv.get('dispersal') is not None else 100.0)
             for key, attr in LEVEL_FIELDS.items():
-                check(where, key, getattr(w, attr), ns_float_value(lv.get(key)))
+                want = ns_float_value(lv.get(key))
+                if melee and key == 'damages':            # PORT DIVERGENCE (weapon.MELEE_DAMAGE_STEP): +20% of level 1 a level
+                    want = round(ns_float_value(d['level_1'].get('damages')) * (1.0 + 0.2 * (level - 1)), 2)
+                check(where, key, getattr(w, attr), want)
         one = weapon_at(d, 1)
         four = weapon_at(d, 4)
         traits = ''.join(' ' + t for t, on in (('multihit', one.multihit), ('explosive', one.explosive),

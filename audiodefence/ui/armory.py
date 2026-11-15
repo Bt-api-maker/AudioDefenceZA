@@ -21,6 +21,7 @@ import logging
 from ..app import App
 from ..game import data
 from ..game.inventory import LEVEL_IN_EVERY_MODE, Inventory
+from ..game.weapon import melee_damage_at
 from ..game.weapon_manager import WeaponManager
 from ..platform.defaults import ns_float_value, ns_int_value
 from ..platform.runloop import RunLoop
@@ -117,6 +118,17 @@ class WeaponDescriptionView:
         d = self.current_level_dict
         stats = 'Damages : %.1f, Capacity : %i, Spread : %i' % (
             ns_float_value(d.get('damages')), ns_int_value(d.get('capacity')), ns_int_value(d.get('spread')))
+        if wm.is_melee_for_weapon_with_name(name):
+            # PORT ADDITION (user request, 2026-11-16): a melee weapon has no magazine, so the line says what its
+            # upgrades do change - the damage (`melee_damage_at`) and how often it swings.
+            swings = 1.0 / ns_float_value(d.get('fireRate')) if ns_float_value(d.get('fireRate')) > 0.0 else 0.0
+            damage = melee_damage_at(self.weapon_stats_dict, self.current_level)
+            if swings > 0.0:
+                stats = 'Damages : %.1f, Swings per second : %.2f, Spread : %i' % (
+                    damage, swings, ns_int_value(d.get('spread')))
+            else:
+                stats = 'Damages : %.1f, Capacity : %i, Spread : %i' % (
+                    damage, ns_int_value(d.get('capacity')), ns_int_value(d.get('spread')))
         self.weapon_stats.label = self.weapon_stats.text = stats
         description = self.weapon_stats_dict.get('description') or ''
         self.weapon_description.label = self.weapon_description.text = description

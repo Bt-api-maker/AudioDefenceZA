@@ -1364,7 +1364,7 @@ can be checked against the binary or put back. Listed below are the ones you wou
 rest are internal — analytics that only log locally, a sanity check that only printed, an undefined return
 value nothing reads.
 
-There are **187 divergences** and **15 original quirks kept on purpose** in the notes, of which 82 are
+There are **189 divergences** and **15 original quirks kept on purpose** in the notes, of which 82 are
 listed here.
 
 ### 1. Windows standing in for a phone
@@ -1591,8 +1591,8 @@ replacing them.
 - **New tarot cards**, good and bad, dealt from the original's own decks alongside its cards. Each deck
   keeps its subject — the arena, the zombies, your guns — and gains as many good cards as bad, so the
   third card stays an even chance. More will follow.
-- **Upgrades past level 4**, in the armory. Guns and melee weapons gain a tenth of their level 4 damage a
-  level, and magazines of more than two rounds a little more; fire rate and reload stay as they are. Each
+- **Upgrades past level 4**, in the armory. Guns gain a tenth of their level 4 damage a
+  level (melee weapons gain a fifth of their level 1 damage with every upgrade, from level 2 on), and magazines of more than two rounds a little more; fire rate and reload stay as they are. Each
   level costs more than the last: a gun's go coins, coins, diamonds, as its first three do, melee weapons
   and power-ups are all coins, and the Sonic Cannon is all diamonds. Levels above 4 only count in Endless.
   Every challenge and Extra arena is tuned at or below level 4 and treats anything higher as level 4, so it

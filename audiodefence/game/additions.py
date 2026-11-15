@@ -108,9 +108,9 @@ EXTRA_POWER_UP_LEVELS = 4
 TOP_LEVEL = 99
 #: each level dearer than the last by this, so that it never stops being something to play for
 PRICE_GROWTH = 1.3
-#: a gun or melee weapon gains a tenth of its level-4 damage a level, and a magazine of more than two a
-#: twentieth of its level-4 size.  Nothing else grows: fire rate is tied to the gun's sounds, and melee is
-#: at its fastest by level 4.  The Tactical Rifle's 15 goes up 1.5 a level, a Zombie's 35 in one shot at 18.
+#: a gun gains a tenth of its level-4 damage a level (a melee weapon's damage is `weapon.melee_damage_at`
+#: now, a fifth of its level 1's), and a magazine of more than two a twentieth of its level-4 size.  Nothing
+#: else grows: fire rate is tied to the gun's sounds, and melee is at its fastest by level 4.  The Tactical Rifle's 15 goes up 1.5 a level, a Zombie's 35 in one shot at 18.
 DAMAGE_STEP = 0.10
 CLIP_STEP = 0.05
 #: How far a power-up can be bought where going on would make it a different game, and what it gains a
